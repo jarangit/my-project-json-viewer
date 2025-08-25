@@ -22,7 +22,6 @@ type Props = {
 };
 
 const Card = ({ data, title, path }: Props) => {
-  console.log("🚀 ~ Card ~ path:", path);
   // ฟังก์ชันแยก type และ class สีแบบ static
   const typeColorMap: Record<
     string,
@@ -84,10 +83,9 @@ const Card = ({ data, title, path }: Props) => {
       const watermark = document.createElement("div");
       watermark.innerText = "jsp.dev";
       watermark.style.position = "absolute";
-      watermark.style.bottom = "16px";
       watermark.style.right = "24px";
       watermark.style.opacity = "0.25";
-      watermark.style.fontSize = "2rem";
+      watermark.style.fontSize = "1rem";
       watermark.style.fontWeight = "bold";
       watermark.style.color = "#2563eb";
       watermark.style.zIndex = "3";
@@ -104,7 +102,7 @@ const Card = ({ data, title, path }: Props) => {
       });
       document.body.removeChild(wrapper);
       const link = document.createElement("a");
-      link.download = "card.png";
+      link.download = `jps-${title}.png`;
       link.href = dataUrl;
       link.click();
     } catch (error) {
@@ -154,7 +152,7 @@ const Card = ({ data, title, path }: Props) => {
       <div className="mb-3 flex justify-between items-start">
         <div>
           <div className="font-semibold text-2xl">{title}</div>
-          <PathOutput data={path} />
+          <PathOutput data={path ?? []} />
         </div>
         <div className="flex gap-3">
           <DropdownMenu>
@@ -208,6 +206,9 @@ const Card = ({ data, title, path }: Props) => {
                 <th className="p-3 text-left font-semibold text-gray-600">
                   Value
                 </th>
+                <th className="p-3 text-left font-semibold text-gray-600">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -216,6 +217,12 @@ const Card = ({ data, title, path }: Props) => {
                 .map(([key, value]) => {
                   const type = getType(value);
                   const color = typeColorMap[type];
+                  const displayValue = Array.isArray(value)
+                    ? Array.isArray(value) &&
+                      value.every((v) => typeof v === "string")
+                      ? JSON.stringify(value)
+                      : `Array (${value.length} items)`
+                    : String(value);
                   return (
                     <tr
                       key={key}
@@ -233,21 +240,34 @@ const Card = ({ data, title, path }: Props) => {
                       </td>
                       <td
                         className="p-3 font-mono cursor-pointer align-top"
-                        title={
-                          Array.isArray(value)
-                            ? Array.isArray(value) &&
-                              value.every((v) => typeof v === "string")
-                              ? JSON.stringify(value)
-                              : `Array (${value.length} items)`
-                            : String(value)
-                        }
+                        title={displayValue}
                       >
-                        {Array.isArray(value)
-                          ? Array.isArray(value) &&
-                            value.every((v) => typeof v === "string")
-                            ? JSON.stringify(value)
-                            : `Array (${value.length} items)`
-                          : String(value)}
+                        {displayValue}
+                      </td>
+                      <td className="p-3 align-top">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger>
+                            <IoMdMore size={25} />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => {
+                                navigator.clipboard.writeText(displayValue);
+                              }}
+                            >
+                              Copy value
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                navigator.clipboard.writeText(`data.${key}`);
+                              }}
+                            >
+                              Copy pointer (JS)
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </td>
                     </tr>
                   );

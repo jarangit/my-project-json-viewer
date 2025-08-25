@@ -8,6 +8,8 @@ import Card from "../components/card";
 import TreeJsonView from "../components/tree-json-view";
 import Breadcrumb from "../components/breadcrumb";
 import { jsonUtils } from "@/utils/json-utils";
+import PathOutput from "../components/path-display";
+import { Input } from "@/components/ui/input";
 
 const Monaco = dynamic(() => import("../components/jsonCode"), { ssr: false });
 
@@ -37,7 +39,6 @@ export default function ViewPage() {
   }, [raw]);
 
   const onSelectNode = (node: any) => {
-    console.log("🚀 ~ onSelectNode ~ node:", node);
     setDataForCardPreview(node);
     const uuid = node?.value?.jspUUID;
     const found = jsonUtils.findById(data, uuid);
@@ -58,11 +59,11 @@ export default function ViewPage() {
   const [tab, setTab] = useState<"tree" | "code">("tree");
 
   return (
-    <main className="space-y-4">
+    <main className="space-y-4 mt-10">
       <div className="flex items-center gap-2">
-        <h1 className="text-xl font-semibold">Viewer</h1>
+        {/* <h1 className="text-xl font-semibold">Viewer</h1> */}
 
-        <div className="ml-auto flex rounded border">
+        {/* <div className="ml-auto flex rounded border">
           <button
             className={`px-3 py-1 ${
               tab === "tree" ? "bg-black text-white" : ""
@@ -79,7 +80,7 @@ export default function ViewPage() {
           >
             Code
           </button>
-        </div>
+        </div> */}
       </div>
 
       {!raw && (
@@ -91,7 +92,7 @@ export default function ViewPage() {
       )}
 
       <div className="grid grid-cols-4 gap-4">
-        <div className="col-span-1 overflow-auto">
+        <div className="col-span-1 overflow-auto flex flex-col gap-3">
           {/* treen view */}
           <TreeJsonView
             data={data || {}}
@@ -108,8 +109,8 @@ export default function ViewPage() {
             </div>
           )} */}
         </div>
-        <div className="col-span-3 bg-gray-200 rounded-3xl p-6  max-h-[100vh] overflow-auto flex flex-col gap-6">
-          <Breadcrumb items={path} />
+        <div className="col-span-3 bg-gray-100 rounded-3xl p-6  max-h-[100vh] overflow-auto flex flex-col gap-6">
+          <PathOutput data={path} />
           <div
             className={`grid gap-4 ${
               dataForCardPreview?.value &&
@@ -118,7 +119,9 @@ export default function ViewPage() {
                 : "grid-cols-1 sm:grid-cols-2 md:grid-cols-2"
             }`}
           >
-            {dataForCardPreview && path && Array.isArray(dataForCardPreview?.value) ? (
+            {dataForCardPreview &&
+            path &&
+            Array.isArray(dataForCardPreview?.value) ? (
               dataForCardPreview?.value.map(
                 (item: object, index: Key | null | undefined) => (
                   <Card

@@ -1,4 +1,7 @@
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import React, { useState } from "react";
+import { jsonUtils } from "@/utils/json-utils";
 
 type Props = {
   data: object;
@@ -17,6 +20,8 @@ function TreeNode({
   _onSelectNode: (node: any) => void;
   currentKey?: string;
 }) {
+  console.log("🚀 ~ TreeNode ~ nodeKey:", nodeKey);
+  console.log("🚀 ~ TreeNode ~ value:", value);
   const [open, setOpen] = useState(nodeKey === "root");
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const isArrayString =
@@ -33,9 +38,9 @@ function TreeNode({
   };
 
   return (
-    <div className="max-h-[100vh] ">
+    <div className="max-h-[100vh]">
       <div
-        className={`flex items-center gap-2${
+        className={`flex items-center gap-2 ${
           canExpand ? " cursor-pointer" : ""
         } ${currentKey === nodeKey ? "bg-blue-100" : ""}`}
         onClick={() => handleSelectNode()}
@@ -49,22 +54,28 @@ function TreeNode({
         )}
 
         {(isObject || isArray) && (
-          <>
-            <span className="font-medium text-gray-800">{nodeKey}:</span>
-            {isArray ? (
-              <span className="text-purple-600 whitespace-nowrap">
-                {`Array (${value.length} items)`}
-              </span>
-            ) : isObject ? (
-              <span className="text-sky-600 whitespace-nowrap">
-                {"Object"}
-              </span>
-            ) : (
-              <span className="text-orange-600 whitespace-nowrap">
-                {String(value)}
-              </span>
-            )}
-          </>
+          <div className="my-1">
+            <div>
+              <span className="font-medium text-gray-800">{nodeKey}:</span>
+              {isArray ? (
+                <span className="text-purple-600 whitespace-nowrap">
+                  {`Array (${value.length} items)`}
+                </span>
+              ) : isObject ? (
+                <span className="text-sky-600 whitespace-nowrap">
+                  {"Object"} {Object.keys(value).length} keys
+                </span>
+              ) : (
+                <span className="text-orange-600 whitespace-nowrap">
+                  {String(value)}
+                </span>
+              )}
+            </div>
+            <Progress
+              className="max-w-[100px]"
+              value={Object.keys(value).length}
+            />
+          </div>
         )}
       </div>
       {open && (
@@ -97,12 +108,52 @@ function TreeNode({
 
 const TreeJsonView = ({ data, _onSelectNode }: Props) => {
   const [currentKey, setCurrentKey] = useState<string | undefined>(undefined);
+  const [searchResult, setSearchResult] = useState<any[]>([]);
+  const [searchText, setSearchText] = useState<string>("");
   const handleSelectNode = (node: any) => {
     setCurrentKey(node.key);
     _onSelectNode(node);
   };
+  const onSearch = (searchTerm: string) => {
+    setSearchText(searchTerm);
+    const results = jsonUtils.search(data, searchTerm);
+    if (results?.length) {
+      setSearchResult(results);
+    }
+    console.log("Search results:", results);
+  };
   return (
     <div className=" h-full overflow-x-scroll ">
+      <Input placeholder="Search" onChange={(e) => onSearch(e.target.value)} />
+      {searchResult?.length && searchText && (
+        <ul className="flex flex-col gap-2 mt-2 max-h-[400px] overflow-auto">
+          {searchResult.map((result, key) => {
+            // ไฮไลท์เฉพาะส่วนที่ตรงกับ searchText
+            const value = String(result.value);
+            const parts = searchText
+              ? value.split(new RegExp(`(${searchText})`, "gi"))
+              : [value];
+            return (
+              <li key={key} className="bg-gray-200 p-3 rounded-xl">
+                <div className="text-gray-400">
+                  Path: {result.path.join(" > ")}
+                </div>
+                <div>
+                  {parts.map((part, idx) =>
+                    part.toLowerCase() === searchText.toLowerCase() ? (
+                      <span key={idx} className="bg-yellow-300 text-black rounded px-1">
+                        {part}
+                      </span>
+                    ) : (
+                      <span key={idx}>{part}</span>
+                    )
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
       <TreeNode
         nodeKey="root"
         value={data}

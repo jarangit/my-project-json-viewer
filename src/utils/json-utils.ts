@@ -23,7 +23,7 @@ export const jsonUtils = {
         if (found) return found;
       }
       if (Array.isArray(value)) {
-        console.log("🚀 ~ value:", value)
+        console.log("🚀 ~ value:", value);
         for (let i = 0; i < value.length; i++) {
           const found = jsonUtils.getPathById(value[i], id, [
             ...path,
@@ -35,5 +35,22 @@ export const jsonUtils = {
       }
     }
     return null;
+  },
+  search: (data: any, searchTerm: string): any[] => {
+    const results: any[] = [];
+    const search = (obj: any, path: string[] = []) => {
+      if (typeof obj === "object" && obj !== null) {
+        for (const key in obj) {
+          const currentPath = [...path, key];
+          if (typeof obj[key] === "string" && obj[key].includes(searchTerm)) {
+            results.push({ key, value: obj[key], path: currentPath });
+          } else {
+            search(obj[key], currentPath);
+          }
+        }
+      }
+    };
+    search(data);
+    return results;
   },
 };
