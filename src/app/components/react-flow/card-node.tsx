@@ -12,16 +12,14 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import GroupedList from "./grouped-list";
-import ChainDisplay from "./chain-display";
-import PathOutput from "./path-display";
+import PathOutput from "../path-display";
 type Props = {
   data: object;
   title?: string;
   path?: Array<{ label: string; href: string }>;
 };
 
-const Card = ({ data, title, path }: Props) => {
+const CardNodeItem = ({ data, title, path }: Props) => {
   // ฟังก์ชันแยก type และ class สีแบบ static
   const typeColorMap: Record<
     string,
@@ -148,7 +146,7 @@ const Card = ({ data, title, path }: Props) => {
   }
 
   return (
-    <div className="rounded-2xl p-6 bg-white" ref={cardRef}>
+    <div className="rounded-2xl bg-white" ref={cardRef}>
       <div className="mb-3 flex justify-between items-start">
         <div>
           <div className="font-semibold text-2xl">{title}</div>
@@ -280,4 +278,4 @@ const Card = ({ data, title, path }: Props) => {
   );
 };
 
-export default Card;
+export default CardNodeItem;

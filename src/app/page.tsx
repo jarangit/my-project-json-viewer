@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Card from "./components/card";
+import { jsonUtils } from "@/utils/json-utils";
 
 export default function Home() {
   const [text, setText] = useState("");
@@ -12,8 +13,9 @@ export default function Home() {
     try {
       JSON.parse(t); // แค่ตรวจว่าเป็น JSON ก่อน
       setText(t);
-      console.log("🚀 ~ onFile ~ t:", t);
-    } catch (e: any) {
+      const schema = jsonUtils.jsonToSchemaArray(JSON.parse(t));
+      console.log("🚀 ~ onFile ~ schema:", schema);
+    } catch (e) {
       setError(e.message ?? "Invalid JSON");
     }
   };
@@ -31,7 +33,8 @@ export default function Home() {
             setText(e.target.value);
             try {
               if (e.target.value) JSON.parse(e.target.value);
-            } catch (err: any) {
+              const schema = jsonUtils.jsonToSchemaArray(JSON.parse(e.target.value));
+            } catch (err) {
               setError(err.message ?? "Invalid JSON");
             }
           }}
@@ -59,7 +62,7 @@ export default function Home() {
                 JSON.parse(text);
                 sessionStorage.setItem("JSON_PWIN_INLINE", text);
                 window.location.href = "/view?inline=1";
-              } catch (err: any) {
+              } catch (err) {
                 setError(err.message ?? "Invalid JSON");
               }
             }}
@@ -73,11 +76,6 @@ export default function Home() {
         เดโม่: วาง JSON หรืออัปไฟล์ → คลิก “เปิดดูทันที” เพื่อดูในหน้า /view
         (แบบ inline)
       </p>
-      <Card
-        data={{
-          test: "value",
-        }}
-      />
     </main>
   );
 }

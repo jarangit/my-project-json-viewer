@@ -10,32 +10,26 @@ import Breadcrumb from "../components/breadcrumb";
 import { jsonUtils } from "@/utils/json-utils";
 import PathOutput from "../components/path-display";
 import { Input } from "@/components/ui/input";
+import CustomNodeFlow from "../components/diagram";
 
 const Monaco = dynamic(() => import("../components/jsonCode"), { ssr: false });
 
 export default function ViewPage() {
   const [raw, setRaw] = useState<string>("");
   const [path, setPath] = useState<any[]>([]);
+  const [jsonRelations, setJsonRelations] = useState<any[]>([]);
   const [dataForCardPreview, setDataForCardPreview] = useState<any>(undefined);
   const data = useMemo(() => {
-    function addId(obj: any): any {
-      if (Array.isArray(obj)) {
-        return obj.map((item) => addId(item));
-      } else if (typeof obj === "object" && obj !== null) {
-        return Object.fromEntries(
-          Object.entries(obj)
-            .map(([k, v]) => [k, addId(v)])
-            .concat([["jspUUID", uuidv4()]])
-        );
-      }
-      return obj;
-    }
     try {
       const parsed = raw ? JSON.parse(raw) : null;
-      return addId(parsed);
+      return jsonUtils.addId({ obj: parsed });
     } catch {
       return null;
     }
+  }, [raw]);
+
+  const dataToFlow = useMemo(() => {
+    return jsonUtils.addId({ obj: data, type: "FLOW" });
   }, [raw]);
 
   const onSelectNode = (node: any) => {
@@ -52,9 +46,14 @@ export default function ViewPage() {
   // รับโหมด inline จากหน้าแรก
   useEffect(() => {
     const inline = sessionStorage.getItem("JSON_PWIN_INLINE");
-    if (inline) setRaw(inline);
-    console.log(data);
-  }, []);
+    if (inline) {
+      setRaw(inline);
+    }
+    if (raw) {
+      const relations = jsonUtils.toFlowGraph(dataToFlow);
+      setJsonRelations(relations);
+    }
+  }, [raw]);
 
   const [tab, setTab] = useState<"tree" | "code">("tree");
 
@@ -98,50 +97,66 @@ export default function ViewPage() {
             data={data || {}}
             _onSelectNode={(e: any) => onSelectNode(e)}
           />
-          {/* {tab === "tree" && data && (
-            <div className="rounded border p-2 max-h-[100vh] overflow-auto">
-              <JsonViewer value={data} rootName={false} enableClipboard />
-            </div>
-          )}
-          {tab === "code" && (
-            <div>
-              <Monaco value={raw} onChange={setRaw} />
-            </div>
-          )} */}
         </div>
         <div className="col-span-3 bg-gray-100 rounded-3xl p-6  max-h-[100vh] overflow-auto flex flex-col gap-6">
           <PathOutput data={path} />
-          <div
-            className={`grid gap-4 ${
-              dataForCardPreview?.value &&
-              !Array.isArray(dataForCardPreview?.value)
-                ? "grid-cols-1"
-                : "grid-cols-1 sm:grid-cols-2 md:grid-cols-2"
-            }`}
-          >
-            {dataForCardPreview &&
-            path &&
-            Array.isArray(dataForCardPreview?.value) ? (
-              dataForCardPreview?.value.map(
-                (item: object, index: Key | null | undefined) => (
+          <div className="mb-4 flex gap-2">
+            <button
+              className={`px-3 py-1 rounded border text-sm ${
+                tab === "card" ? "bg-black text-white" : "bg-white text-black"
+              }`}
+              onClick={() => setTab("card")}
+            >
+              แสดง Card
+            </button>
+            <button
+              className={`px-3 py-1 rounded border text-sm ${
+                tab === "diagram"
+                  ? "bg-black text-white"
+                  : "bg-white text-black"
+              }`}
+              onClick={() => setTab("diagram")}
+            >
+              แสดง Diagram
+            </button>
+          </div>
+          {tab === "diagram" ? (
+            <div className="h-[80vh]">
+              <CustomNodeFlow data={jsonRelations} />
+            </div>
+          ) : (
+            <div
+              className={`grid gap-4 ${
+                dataForCardPreview?.value &&
+                !Array.isArray(dataForCardPreview?.value)
+                  ? "grid-cols-1"
+                  : "grid-cols-1 sm:grid-cols-2 md:grid-cols-2"
+              }`}
+            >
+              {dataForCardPreview &&
+              path &&
+              Array.isArray(dataForCardPreview?.value) ? (
+                dataForCardPreview?.value.map(
+                  (item: object, index: Key | null | undefined) => (
+                    <Card
+                      path={path}
+                      key={index}
+                      data={item}
+                      title={dataForCardPreview?.key}
+                    />
+                  )
+                )
+              ) : (
+                <div className="col-span-3">
                   <Card
                     path={path}
-                    key={index}
-                    data={item}
+                    data={dataForCardPreview?.value || {}}
                     title={dataForCardPreview?.key}
                   />
-                )
-              )
-            ) : (
-              <div className="col-span-3">
-                <Card
-                  path={path}
-                  data={dataForCardPreview?.value || {}}
-                  title={dataForCardPreview?.key}
-                />
-              </div>
-            )}
-          </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

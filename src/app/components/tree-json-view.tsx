@@ -20,8 +20,6 @@ function TreeNode({
   _onSelectNode: (node: any) => void;
   currentKey?: string;
 }) {
-  console.log("🚀 ~ TreeNode ~ nodeKey:", nodeKey);
-  console.log("🚀 ~ TreeNode ~ value:", value);
   const [open, setOpen] = useState(nodeKey === "root");
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const isArrayString =
