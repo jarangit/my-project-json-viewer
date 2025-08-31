@@ -1,0 +1,172 @@
+{
+  "primitive": {
+    "yellow": {
+      "light": {
+        "$value": "#fad575",
+        "$type": "color"
+      },
+      "dark": {
+        "$value": "#b48100",
+        "$type": "color"
+      },
+      "default": {
+        "$value": "#f6b100",
+        "$type": "color"
+      }
+    },
+    "red": {
+      "dark": {
+        "$value": "#862d2d",
+        "$type": "color"
+      },
+      "default": {
+        "$value": "#b83d3d",
+        "$type": "color"
+      },
+      "light": {
+        "$value": "#d99696",
+        "$type": "color"
+      }
+    },
+    "geen": {
+      "dark": {
+        "$value": "#00912b",
+        "$type": "color"
+      },
+      "default": {
+        "$value": "#00c73b",
+        "$type": "color"
+      },
+      "light": {
+        "$value": "#75e195",
+        "$type": "color"
+      }
+    },
+    "black": {
+      "default": {
+        "$value": "#262626",
+        "$type": "color"
+      },
+      "light": {
+        "$value": "#8a8a8a",
+        "$type": "color"
+      },
+      "dark": {
+        "$value": "#1c1c1c",
+        "$type": "color"
+      }
+    },
+    "sm": {
+      "$value": "4px",
+      "$type": "spacing"
+    },
+    "md": {
+      "$value": "8px",
+      "$type": "spacing"
+    },
+    "lg": {
+      "$value": "16px",
+      "$type": "spacing"
+    },
+    "xl": {
+      "$value": "24px",
+      "$type": "spacing"
+    },
+    "rounded-sm": {
+      "$value": "4px",
+      "$type": "borderRadius"
+    },
+    "rounded-md": {
+      "$value": "8px",
+      "$type": "borderRadius"
+    },
+    "rounded-lg": {
+      "$value": "16px",
+      "$type": "borderRadius"
+    },
+    "rounded-xl": {
+      "$value": "24px",
+      "$type": "borderRadius"
+    },
+    "fs-md": {
+      "$value": "20px",
+      "$type": "fontSizes"
+    },
+    "fs-sm": {
+      "$value": "18px",
+      "$type": "fontSizes"
+    },
+    "fs-lg": {
+      "$value": "26px",
+      "$type": "fontSizes"
+    },
+    "fs-xl": {
+      "$value": "36px",
+      "$type": "fontSizes"
+    }
+  },
+  "semantic": {
+    "primary": {
+      "$value": "{yellow.default}",
+      "$type": "color"
+    },
+    "bg": {
+      "surface1": {
+        "$value": "{black.dark}",
+        "$type": "color"
+      },
+      "surface2": {
+        "$value": "#",
+        "$type": "color"
+      }
+    },
+    "text": {
+      "body": {
+        "$value": "#fff",
+        "$type": "color"
+      },
+      "link": {
+        "$value": "{yellow.default}",
+        "$type": "color"
+      }
+    },
+    "p": {
+      "sm": {
+        "$value": "{sm}",
+        "$type": "spacing"
+      },
+      "md": {
+        "$value": "{md}",
+        "$type": "spacing"
+      },
+      "lg": {
+        "$value": "{lg}",
+        "$type": "spacing"
+      },
+      "xl": {
+        "$value": "{xl}",
+        "$type": "spacing"
+      }
+    },
+    "body": {
+      "$value": "{fs-md}",
+      "$type": "fontSizes"
+    },
+    "header": {
+      "$value": "{fs-xl}",
+      "$type": "fontSizes"
+    },
+    "title": {
+      "$value": "{fs-lg}",
+      "$type": "fontSizes"
+    },
+    "desc": {
+      "$value": "{fs-sm}",
+      "$type": "fontSizes"
+    }
+  },
+  "$themes": [],
+  "$metadata": {
+    "tokenSetOrder": ["primitive", "semantic"]
+  }
+}

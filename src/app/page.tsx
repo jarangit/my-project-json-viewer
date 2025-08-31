@@ -23,6 +23,8 @@ export default function Home() {
   return (
     <main className="space-y-6">
       <h1 className="text-2xl font-bold">JSON-PWIN</h1>
+      <button className="text-band">Confirm</button>
+      <button className="text-midnight">Confirm</button>
       <div className="space-y-2">
         <textarea
           className="w-full h-40 rounded border p-2"
@@ -33,7 +35,9 @@ export default function Home() {
             setText(e.target.value);
             try {
               if (e.target.value) JSON.parse(e.target.value);
-              const schema = jsonUtils.jsonToSchemaArray(JSON.parse(e.target.value));
+              const schema = jsonUtils.jsonToSchemaArray(
+                JSON.parse(e.target.value)
+              );
             } catch (err) {
               setError(err.message ?? "Invalid JSON");
             }
